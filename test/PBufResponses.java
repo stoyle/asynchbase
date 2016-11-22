@@ -39,13 +39,14 @@ import org.hbase.async.generated.ClientPB.ResultOrException;
 import org.hbase.async.generated.ClientPB.RegionActionResult.Builder;
 import org.hbase.async.generated.HBasePB.NameBytesPair;
 import org.hbase.async.generated.RPCPB.ResponseHeader;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.Ignore;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.GeneratedMessageLite;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 @Ignore // ignore for test runners
 public class PBufResponses {
@@ -249,7 +250,7 @@ public class PBufResponses {
    * @return
    * @throws Exception
    */
-  static AbstractMap.SimpleEntry<ChannelBuffer, Integer> encodeResponseWithAssocaitedCells(
+  static AbstractMap.SimpleEntry<ByteBuf, Integer> encodeResponseWithAssocaitedCells(
       final GeneratedMessageLite response, final List<KeyValue> associated_cells) throws Exception {
     final int pblen = response.getSerializedSize();
     final int vlen = CodedOutputStream.computeRawVarint32Size(pblen);
@@ -257,7 +258,7 @@ public class PBufResponses {
     final CodedOutputStream out = CodedOutputStream.newInstance(buf, 0, vlen + pblen);
 
     out.writeMessageNoTag(response);
-    ChannelBuffer cbuf = ChannelBuffers.dynamicBuffer();
+    ByteBuf cbuf = Unpooled.buffer();
     cbuf.writeBytes(buf);
 
     int rbyte_cnt = cbuf.readableBytes();
@@ -267,7 +268,7 @@ public class PBufResponses {
       kv.serialize(cbuf, KeyValue.PUT);
     } // end for
     int cells_block_size = cbuf.readableBytes() - rbyte_cnt;
-    return new AbstractMap.SimpleEntry<ChannelBuffer, Integer>(
+    return new AbstractMap.SimpleEntry<ByteBuf, Integer>(
         cbuf, cells_block_size);
   }
 

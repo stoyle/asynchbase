@@ -534,7 +534,7 @@ public final class GetRequest extends BatchableRpc
   }
 
   /** Serialize the raw underlying `Put' into the given buffer.  */
-  void serializePayloadInto(final byte server_version, final ChannelBuffer buf) {
+  void serializePayloadInto(final byte server_version, final ByteBuf buf) {
     buf.writeByte(1);    // Get#GET_VERSION.  Undocumented versioning of Get.
     writeByteArray(buf, key);
     buf.writeLong(lockid);  // Lock ID.
@@ -776,7 +776,7 @@ public final class GetRequest extends BatchableRpc
    */
   static ArrayList<KeyValue> convertResultWithAssociatedCells(
         final ClientPB.Result res,
-        final ChannelBuffer buf,
+        final ByteBuf buf,
         final int cell_size) {
     final int associated_cell_cnt = res.getAssociatedCellCount();
     final int pb_cell_cnt = res.getCellCount();
@@ -828,7 +828,7 @@ public final class GetRequest extends BatchableRpc
   }
 
   @Override
-  void serializePayload(ChannelBuffer buf) {
+  void serializePayload(ByteBuf buf) {
     // TODO Auto-generated method stub
   }
 }

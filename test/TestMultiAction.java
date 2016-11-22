@@ -44,13 +44,14 @@ import org.hbase.async.generated.ClientPB.MultiResponse;
 import org.hbase.async.generated.ClientPB.RegionActionResult;
 import org.hbase.async.generated.ClientPB.ResultOrException;
 import org.hbase.async.generated.ClientPB.RegionActionResult.Builder;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import io.netty.buffer.ByteBuf;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ RowLock.class })
@@ -1085,7 +1086,7 @@ public class TestMultiAction extends BaseTestHBaseClient {
     final List<KeyValue> kvs = new ArrayList<KeyValue>(2);
     kvs.add(new KeyValue(KEY, FAMILY, QUALIFIER, 1, VALUE));
     kvs.add(new KeyValue(KEY, FAMILY, QUALIFIER, 2, VALUE));
-    AbstractMap.SimpleEntry<ChannelBuffer, Integer> cbuf_cells = PBufResponses.encodeResponseWithAssocaitedCells(
+    AbstractMap.SimpleEntry<ByteBuf, Integer> cbuf_cells = PBufResponses.encodeResponseWithAssocaitedCells(
         PBufResponses.generateMultiActionResponse(results), kvs);
     
     final MultiAction.Response decoded = 
@@ -1124,7 +1125,7 @@ public class TestMultiAction extends BaseTestHBaseClient {
     // two associated cells following the PB response
     final List<KeyValue> kvs = new ArrayList<KeyValue>(1);
     kvs.add(new KeyValue(KEY, FAMILY, QUALIFIER, 1, VALUE));
-    AbstractMap.SimpleEntry<ChannelBuffer, Integer> cbuf_cells = PBufResponses.encodeResponseWithAssocaitedCells(
+    AbstractMap.SimpleEntry<ByteBuf, Integer> cbuf_cells = PBufResponses.encodeResponseWithAssocaitedCells(
         PBufResponses.generateMultiActionResponse(results), kvs);
     
     final MultiAction.Response decoded = 
